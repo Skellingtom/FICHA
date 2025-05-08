@@ -6,7 +6,7 @@ body {
             background-color: #afafaf;
         }
         .sheet-container {
-            background-image:url(/imagens/preview.jpg);
+            background-image:url(imagens/preview.jpg);
             background-size: cover;
             background-position-x:50%;
             border: 1px solid #ddd;
