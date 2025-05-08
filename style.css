@@ -1,0 +1,108 @@
+body {
+            font-family:"Cinzel Decorative",serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #afafaf;
+        }
+        .sheet-container {
+            background-image:url(/imagens/preview.jpg);
+            background-size: cover;
+            background-position-x:50%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .stat-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .stat {
+            margin-right: 30px;
+        }
+        .stat-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+         .stat-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            border-bottom: 1px solid #ddd;
+            min-width: 100px;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 15%;
+        }
+        .stat-value1 {
+            width: 5px;
+            border-bottom: 1px solid #ddd;
+            min-width: 50px;
+            padding: 5px;
+            background-color: #ffffff;
+            border-radius: 15%;
+        }
+
+        textarea {
+            width: 98%;
+            min-height: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: "Modern Antiqua",serif;
+            font-size: medium;
+        }
+        .inventory-item {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border-radius: 3px;
+        }
+        .texto1{
+            color: crimson;
+        }
+
+        .cinzel-decorative-regular {
+            font-family: "Cinzel Decorative", serif;
+            font-weight: 400;
+            font-style: normal;
+          }
+          
+          .cinzel-decorative-bold {
+            font-family: "Cinzel Decorative", serif;
+            font-weight: 700;
+            font-style: normal;
+          }
+          
+          .cinzel-decorative-black {
+            font-family: "Cinzel Decorative", serif;
+            font-weight: 900;
+            font-style: normal;
+          }
+          
+          .modern-antiqua-regular {
+            font-family: "Modern Antiqua", serif;
+            font-weight: 400;
+            font-style: normal;
+          }
+          

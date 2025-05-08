@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Sheet</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alkatra&family=Cinzel+Decorative:wght@400;700;900&family=Concert+One&family=Delicious+Handrawn&family=Merriweather:ital@1&family=Roboto+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sheet-container">
+        <h1 class="texto1">SANGUINOLENCIA</h1>
+        
+        <div class="section">
+            <div class="section-title"></div>
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="stat-label">Nome:</div>
+                    <div class="stat-value" contenteditable="true"></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Classe:</div>
+                    <div class="stat-value" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="stat-label texto1">HP:</div>
+                    <input type="number" min="0" class="stat-value1" contenteditable="true">
+                </div>
+                <div class="stat">
+                    <div class="stat-label texto1">SP:</div>
+                    <input type="number" min="0" class="stat-value1" contenteditable="true">
+                </div>
+                <div class="stat">
+                    <div class="stat-label texto1">MP:</div>
+                    <input type="number" min="0" class="stat-value1" contenteditable="true">
+                </div>
+                <div class="stat">
+                    <div class="stat-label texto1">Peso:</div>
+                    <input type="number" max="7" min="0" class="stat-value1" contenteditable="true">
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title"></div>
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="stat-label">Item Querido:</div>
+                    <div class="stat-value" contenteditable="true"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div> <h1 class="section-title, texto1"> História </h1> </div>
+            <textarea placeholder="Conte o seu passado aqui"></textarea>
+        </div>
+        
+        <div class="section">
+            <div class="section-title"><h1 class="texto1">Inventario</h1></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <button style="margin-top: 10px; padding: 5px 10px;">Adicionar Item</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <h1 class="texto1">Encantamentos</h1>
+            </div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <button style="margin-top: 10px; padding: 5px 10px;">Adicionar Encantamentos</button>
+        </div>
+    </div> 
+
+    <script>
+        // Seleciona TODOS os botões e adiciona o evento de clique
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                const section = this.closest('.section');
+                const newItem = document.createElement('div');
+                newItem.className = 'inventory-item';
+                newItem.contentEditable = 'true';
+                section.insertBefore(newItem, this);
+            });
+        });
+    </script>
+
+</body>
+</html>
