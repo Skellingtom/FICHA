@@ -63,30 +63,29 @@
             <textarea placeholder="Conte o seu passado aqui"></textarea>
         </div>
         
-        <div class="section inventory-section"> <!-- Adicionei inventory-section -->
-        <div class="section-title"><h1 class="texto1">Inventario</h1></div>
-        <div class="inventory-item" contenteditable="true"></div>
-        <div class="inventory-item" contenteditable="true"></div>
-        <div class="inventory-item" contenteditable="true"></div>
-        <button style="margin-top: 10px; padding: 5px 10px;">Adicionar Item</button>
-    </div>
-
-    <div class="section enchant-section"> <!-- Adicionei enchant-section -->
-        <div class="section-title">
-            <h1 class="texto1">Encantamentos</h1>
+        <div class="section">
+            <div class="section-title"><h1 class="texto1">Inventario</h1></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <button style="margin-top: 10px; padding: 5px 10px;">Adicionar Item</button>
         </div>
-        <div class="inventory-item" contenteditable="true"></div>
-        <div class="inventory-item" contenteditable="true"></div>
-        <div class="inventory-item" contenteditable="true"></div>
-        <button style="margin-top: 10px; padding: 5px 10px;">Adicionar Encantamentos</button>
-    </div>
+
+        <div class="section">
+            <div class="section-title">
+                <h1 class="texto1">Encantamentos</h1>
+            </div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <div class="inventory-item" contenteditable="true"></div>
+            <button style="margin-top: 10px; padding: 5px 10px;">Adicionar Encantamentos</button>
+        </div>
     </div> 
 
     <script>
-             // Função para salvar TODOS os dados da ficha
+             // Salvar dados no LocalStorage
     function saveCharacter() {
         const characterData = {
-            // Dados básicos
             nome: document.querySelector('.stat-value').textContent,
             classe: document.querySelectorAll('.stat-value')[1].textContent,
             hp: document.querySelector('input[type="number"]').value,
@@ -95,49 +94,29 @@
             peso: document.querySelectorAll('input[type="number"]')[3].value,
             itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
             historia: document.querySelector('textarea').value,
-            
-            // Inventário (todos os itens, incluindo os adicionados dinamicamente)
-             // Agora usa as classes específicas
-        inventario: Array.from(document.querySelectorAll('.inventory-section .inventory-item')).map(item => item.textContent),
-        encantamentos: Array.from(document.querySelectorAll('.enchant-section .inventory-item')).map(item => item.textContent)
-    };
-    localStorage.setItem('characterData', JSON.stringify(characterData));
-}
-
-function loadCharacter() {
-    const savedData = localStorage.getItem('characterData');
-    if (savedData) {
-        const characterData = JSON.parse(savedData);
-
-        // ... (preencha os outros campos como antes)
-
-        // Preenche INVENTÁRIO (usando a classe inventory-section)
-        const inventorySection = document.querySelector('.inventory-section');
-        inventorySection.querySelectorAll('.inventory-item').forEach(item => item.remove()); // Limpa itens existentes
-        
-        characterData.inventario?.forEach(itemText => {
-            const newItem = document.createElement('div');
-            newItem.className = 'inventory-item';
-            newItem.contentEditable = true;
-            newItem.textContent = itemText;
-            inventorySection.insertBefore(newItem, inventorySection.querySelector('button'));
-        });
-
-        // Preenche ENCANTAMENTOS (usando a classe enchant-section)
-        const enchantSection = document.querySelector('.enchant-section');
-        enchantSection.querySelectorAll('.inventory-item').forEach(item => item.remove()); // Limpa itens existentes
-        
-        characterData.encantamentos?.forEach(itemText => {
-            const newItem = document.createElement('div');
-            newItem.className = 'inventory-item';
-            newItem.contentEditable = true;
-            newItem.textContent = itemText;
-            enchantSection.insertBefore(newItem, enchantSection.querySelector('button'));
-        });
+            inventario: Array.from(document.querySelectorAll('.inventory-item')).map(item => item.textContent),
+            encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item')).map(item => item.textContent)
+        };
+        localStorage.setItem('characterData', JSON.stringify(characterData));
+        alert('Personagem salvo!');
     }
-}
 
-    // Adiciona o botão de Salvar
+    // Carregar dados do LocalStorage
+    function loadCharacter() {
+        const savedData = localStorage.getItem('characterData');
+        if (savedData) {
+            const characterData = JSON.parse(savedData);
+            document.querySelector('.stat-value').textContent = characterData.nome;
+            document.querySelectorAll('.stat-value')[1].textContent = characterData.classe;
+            document.querySelector('input[type="number"]').value = characterData.hp;
+            document.querySelector('input[type="number"]').value = characterData.sp;
+            document.querySelector('input[type="number"]').value = characterData.mp;
+            document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido;
+            // ... (preencher os outros campos)
+        }
+    }
+
+    // Botão para salvar
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Salvar Personagem';
     saveButton.style.marginTop = '10px';
@@ -145,19 +124,9 @@ function loadCharacter() {
     saveButton.onclick = saveCharacter;
     document.querySelector('.sheet-container').appendChild(saveButton);
 
-    // Carrega automaticamente ao abrir a página
+    // Carregar automaticamente ao abrir a página
     window.addEventListener('DOMContentLoaded', loadCharacter);
 
-    // Script para adicionar itens dinamicamente (já existente)
-    document.querySelectorAll('button').forEach(button => {
-        button.addEventListener('click', function() {
-            const section = this.closest('.section');
-            const newItem = document.createElement('div');
-            newItem.className = 'inventory-item';
-            newItem.contentEditable = 'true';
-            section.insertBefore(newItem, this);
-        });
-    });
         // Seleciona TODOS os botões e adiciona o evento de clique
         document.querySelectorAll('button').forEach(button => {
             button.addEventListener('click', function() {
