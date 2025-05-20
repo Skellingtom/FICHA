@@ -83,9 +83,10 @@
     </div> 
 
     <script>
-             // Salvar dados no LocalStorage
+             // Função para salvar TODOS os dados da ficha
     function saveCharacter() {
         const characterData = {
+            // Dados básicos
             nome: document.querySelector('.stat-value').textContent,
             classe: document.querySelectorAll('.stat-value')[1].textContent,
             hp: document.querySelector('input[type="number"]').value,
@@ -94,29 +95,64 @@
             peso: document.querySelectorAll('input[type="number"]')[3].value,
             itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
             historia: document.querySelector('textarea').value,
-            inventario: Array.from(document.querySelectorAll('.inventory-item')).map(item => item.textContent),
+            
+            // Inventário (todos os itens, incluindo os adicionados dinamicamente)
+            inventario: Array.from(document.querySelectorAll('.section:nth-last-child(2) .inventory-item')).map(item => item.textContent),
+            
+            // Encantamentos (todos os itens, incluindo os adicionados dinamicamente)
             encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item')).map(item => item.textContent)
         };
+
+        // Salva no LocalStorage
         localStorage.setItem('characterData', JSON.stringify(characterData));
-        alert('Personagem salvo!');
+        alert('Ficha salva com sucesso!');
     }
 
-    // Carregar dados do LocalStorage
+    // Função para carregar TODOS os dados da ficha
     function loadCharacter() {
         const savedData = localStorage.getItem('characterData');
         if (savedData) {
             const characterData = JSON.parse(savedData);
-            document.querySelector('.stat-value').textContent = characterData.nome;
-            document.querySelectorAll('.stat-value')[1].textContent = characterData.classe;
-            document.querySelector('input[type="number"]').value = characterData.hp;
-            document.querySelector('input[type="number"]').value = characterData.sp;
-            document.querySelector('input[type="number"]').value = characterData.mp;
-            document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido;
-            // ... (preencher os outros campos)
+
+            // Preenche os campos básicos
+            document.querySelector('.stat-value').textContent = characterData.nome || '';
+            document.querySelectorAll('.stat-value')[1].textContent = characterData.classe || '';
+            document.querySelector('input[type="number"]').value = characterData.hp || '';
+            document.querySelectorAll('input[type="number"]')[1].value = characterData.sp || '';
+            document.querySelectorAll('input[type="number"]')[2].value = characterData.mp || '';
+            document.querySelectorAll('input[type="number"]')[3].value = characterData.peso || '';
+            document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido || '';
+            document.querySelector('textarea').value = characterData.historia || '';
+
+            // Preenche o inventário (remove os itens existentes e adiciona os salvos)
+            const inventorySection = document.querySelector('.section:nth-last-child(2)');
+            const inventoryItems = inventorySection.querySelectorAll('.inventory-item');
+            inventoryItems.forEach(item => item.remove()); // Remove os itens padrão
+            
+            characterData.inventario.forEach(itemText => {
+                const newItem = document.createElement('div');
+                newItem.className = 'inventory-item';
+                newItem.contentEditable = true;
+                newItem.textContent = itemText;
+                inventorySection.insertBefore(newItem, inventorySection.querySelector('button'));
+            });
+
+            // Preenche os encantamentos (remove os existentes e adiciona os salvos)
+            const enchantSection = document.querySelector('.section:last-child');
+            const enchantItems = enchantSection.querySelectorAll('.inventory-item');
+            enchantItems.forEach(item => item.remove()); // Remove os itens padrão
+            
+            characterData.encantamentos.forEach(itemText => {
+                const newItem = document.createElement('div');
+                newItem.className = 'inventory-item';
+                newItem.contentEditable = true;
+                newItem.textContent = itemText;
+                enchantSection.insertBefore(newItem, enchantSection.querySelector('button'));
+            });
         }
     }
 
-    // Botão para salvar
+    // Adiciona o botão de Salvar
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Salvar Personagem';
     saveButton.style.marginTop = '10px';
@@ -124,9 +160,19 @@
     saveButton.onclick = saveCharacter;
     document.querySelector('.sheet-container').appendChild(saveButton);
 
-    // Carregar automaticamente ao abrir a página
+    // Carrega automaticamente ao abrir a página
     window.addEventListener('DOMContentLoaded', loadCharacter);
 
+    // Script para adicionar itens dinamicamente (já existente)
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', function() {
+            const section = this.closest('.section');
+            const newItem = document.createElement('div');
+            newItem.className = 'inventory-item';
+            newItem.contentEditable = 'true';
+            section.insertBefore(newItem, this);
+        });
+    });
         // Seleciona TODOS os botões e adiciona o evento de clique
         document.querySelectorAll('button').forEach(button => {
             button.addEventListener('click', function() {
