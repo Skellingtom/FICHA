@@ -109,6 +109,9 @@
             document.querySelector('.stat-value').textContent = characterData.nome;
             document.querySelectorAll('.stat-value')[1].textContent = characterData.classe;
             document.querySelector('input[type="number"]').value = characterData.hp;
+            document.querySelector('input[type="number"]').value = characterData.sp;
+            document.querySelector('input[type="number"]').value = characterData.mp;
+            document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido;
             // ... (preencher os outros campos)
         }
     }
@@ -123,6 +126,7 @@
 
     // Carregar automaticamente ao abrir a página
     window.addEventListener('DOMContentLoaded', loadCharacter);
+
         // Seleciona TODOS os botões e adiciona o evento de clique
         document.querySelectorAll('button').forEach(button => {
             button.addEventListener('click', function() {
