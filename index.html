@@ -83,6 +83,46 @@
     </div> 
 
     <script>
+             // Salvar dados no LocalStorage
+    function saveCharacter() {
+        const characterData = {
+            nome: document.querySelector('.stat-value').textContent,
+            classe: document.querySelectorAll('.stat-value')[1].textContent,
+            hp: document.querySelector('input[type="number"]').value,
+            sp: document.querySelectorAll('input[type="number"]')[1].value,
+            mp: document.querySelectorAll('input[type="number"]')[2].value,
+            peso: document.querySelectorAll('input[type="number"]')[3].value,
+            itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
+            historia: document.querySelector('textarea').value,
+            inventario: Array.from(document.querySelectorAll('.inventory-item')).map(item => item.textContent),
+            encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item')).map(item => item.textContent)
+        };
+        localStorage.setItem('characterData', JSON.stringify(characterData));
+        alert('Personagem salvo!');
+    }
+
+    // Carregar dados do LocalStorage
+    function loadCharacter() {
+        const savedData = localStorage.getItem('characterData');
+        if (savedData) {
+            const characterData = JSON.parse(savedData);
+            document.querySelector('.stat-value').textContent = characterData.nome;
+            document.querySelectorAll('.stat-value')[1].textContent = characterData.classe;
+            document.querySelector('input[type="number"]').value = characterData.hp;
+            // ... (preencher os outros campos)
+        }
+    }
+
+    // Botão para salvar
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Salvar Personagem';
+    saveButton.style.marginTop = '10px';
+    saveButton.style.padding = '5px 10px';
+    saveButton.onclick = saveCharacter;
+    document.querySelector('.sheet-container').appendChild(saveButton);
+
+    // Carregar automaticamente ao abrir a página
+    window.addEventListener('DOMContentLoaded', loadCharacter);
         // Seleciona TODOS os botões e adiciona o evento de clique
         document.querySelectorAll('button').forEach(button => {
             button.addEventListener('click', function() {
