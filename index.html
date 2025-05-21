@@ -71,6 +71,11 @@
     <div>
         <button class="add-btn" style="margin-top: 10px; padding: 5px 10px;">Adicionar Item</button>
         <button class="remove-btn" style="margin-top: 10px; padding: 5px 10px;">Remover Item</button>
+         <div style="margin-top: 20px; text-align: center;">
+            <button id="saveBtn" style="padding: 8px 15px; margin: 5px;">Salvar Ficha</button>
+            <button id="loadBtn" style="padding: 8px 15px; margin: 5px;">Carregar Ficha</button>
+            <button id="clearBtn" style="padding: 8px 15px; margin: 5px;">Limpar Ficha</button>
+        </div>
     </div>
 </div>
 
@@ -88,49 +93,93 @@
 </div>
 
 <script>
-             // Salvar dados no LocalStorage
-    function saveCharacter() {
-        const characterData = {
-            nome: document.querySelector('.stat-value').textContent,
-            classe: document.querySelectorAll('.stat-value')[1].textContent,
-            hp: document.querySelector('input[type="number"]').value,
-            sp: document.querySelectorAll('input[type="number"]')[1].value,
-            mp: document.querySelectorAll('input[type="number"]')[2].value,
-            peso: document.querySelectorAll('input[type="number"]')[3].value,
-            itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
-            historia: document.querySelector('textarea').value,
-            inventario: Array.from(document.querySelectorAll('.inventory-item')).map(item => item.textContent),
-            encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item')).map(item => item.textContent)
-        };
-        localStorage.setItem('characterData', JSON.stringify(characterData));
-        alert('Personagem salvo!');
-    }
+   // ====== FUNÇÃO PARA SALVAR FICHA ======
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const characterData = {
+                // Atributos básicos
+                nome: document.querySelector('.stat-value').textContent,
+                classe: document.querySelectorAll('.stat-value')[1].textContent,
+                hp: document.querySelectorAll('input[type="number"]')[0].value,
+                sp: document.querySelectorAll('input[type="number"]')[1].value,
+                mp: document.querySelectorAll('input[type="number"]')[2].value,
+                peso: document.querySelectorAll('input[type="number"]')[3].value,
+                itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
+                historia: document.querySelector('textarea').value,
 
-    // Carregar dados do LocalStorage
-    function loadCharacter() {
-        const savedData = localStorage.getItem('characterData');
-        if (savedData) {
+                // Inventário (pega TODOS os itens)
+                inventario: Array.from(document.querySelectorAll('.section:nth-last-child(2) .inventory-item'))
+                    .map(item => item.textContent),
+                
+                // Encantamentos (pega TODOS os encantamentos)
+                encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item'))
+                    .map(item => item.textContent)
+            };
+
+            // Salva no LocalStorage
+            localStorage.setItem('fichaSanguinolencia', JSON.stringify(characterData));
+            alert('Ficha salva com sucesso!');
+        });
+
+        // ====== FUNÇÃO PARA CARREGAR FICHA ======
+        document.getElementById('loadBtn').addEventListener('click', function() {
+            const savedData = localStorage.getItem('fichaSanguinolencia');
+            if (!savedData) {
+                alert('Nenhuma ficha salva encontrada!');
+                return;
+            }
+
             const characterData = JSON.parse(savedData);
+
+            // Preenche os campos básicos
             document.querySelector('.stat-value').textContent = characterData.nome;
             document.querySelectorAll('.stat-value')[1].textContent = characterData.classe;
-            document.querySelector('input[type="number"]').value = characterData.hp;
-            document.querySelector('input[type="number"]').value = characterData.sp;
-            document.querySelector('input[type="number"]').value = characterData.mp;
+            document.querySelectorAll('input[type="number"]')[0].value = characterData.hp;
+            document.querySelectorAll('input[type="number"]')[1].value = characterData.sp;
+            document.querySelectorAll('input[type="number"]')[2].value = characterData.mp;
+            document.querySelectorAll('input[type="number"]')[3].value = characterData.peso;
             document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido;
-            // ... (preencher os outros campos)
-        }
-    }
+            document.querySelector('textarea').value = characterData.historia;
 
-    // Botão para salvar
-    const saveButton = document.createElement('button');
-    saveButton.textContent = 'Salvar Personagem';
-    saveButton.style.marginTop = '10px';
-    saveButton.style.padding = '5px 10px';
-    saveButton.onclick = saveCharacter;
-    document.querySelector('.sheet-container').appendChild(saveButton);
+            // Limpa os itens atuais antes de carregar
+            document.querySelectorAll('.inventory-item').forEach(item => item.remove());
 
-    // Carregar automaticamente ao abrir a página
-    window.addEventListener('DOMContentLoaded', loadCharacter);
+            // Preenche o INVENTÁRIO
+            const inventarioSection = document.querySelector('.section:nth-last-child(2)');
+            characterData.inventario.forEach(itemText => {
+                const newItem = document.createElement('div');
+                newItem.className = 'inventory-item';
+                newItem.contentEditable = true;
+                newItem.textContent = itemText;
+                inventarioSection.insertBefore(newItem, inventarioSection.querySelector('.add-btn').parentNode);
+            });
+
+            // Preenche os ENCANTAMENTOS
+            const encantamentosSection = document.querySelector('.section:last-child');
+            characterData.encantamentos.forEach(encantamentoText => {
+                const newItem = document.createElement('div');
+                newItem.className = 'inventory-item';
+                newItem.contentEditable = true;
+                newItem.textContent = encantamentoText;
+                encantamentosSection.insertBefore(newItem, encantamentosSection.querySelector('.add-btn').parentNode);
+            });
+
+            alert('Ficha carregada!');
+        });
+
+        // ====== FUNÇÃO PARA LIMPAR FICHA ======
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            if (confirm('Tem certeza que deseja limpar toda a ficha?')) {
+                // Limpa inputs editáveis
+                document.querySelectorAll('[contenteditable="true"]').forEach(el => el.textContent = '');
+                document.querySelector('textarea').value = '';
+                document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+
+                // Limpa inventário e encantamentos
+                document.querySelectorAll('.inventory-item').forEach(item => item.remove());
+                localStorage.removeItem('fichaSanguinolencia');
+                alert('Ficha resetada!');
+            }
+        });
 
         // Seleciona TODOS os botões e adiciona o evento de clique
       document.querySelectorAll('.add-btn').forEach(button => {
