@@ -8,6 +8,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alkatra&family=Cinzel+Decorative:wght@400;700;900&family=Concert+One&family=Delicious+Handrawn&family=Merriweather:ital@1&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_PROJETO.firebaseapp.com",
+        projectId: "SEU_PROJETO",
+        storageBucket: "SEU_PROJETO.appspot.com",
+        messagingSenderId: "SEU_SENDER_ID",
+        appId: "SEU_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+</script>
 </head>
 <body>
     <div class="sheet-container">
@@ -83,39 +97,19 @@
     </div> 
 
     <script>
-             // Salvar dados no LocalStorage
-    function saveCharacter() {
-        const characterData = {
-            nome: document.querySelector('.stat-value').textContent,
-            classe: document.querySelectorAll('.stat-value')[1].textContent,
-            hp: document.querySelector('input[type="number"]').value,
-            sp: document.querySelectorAll('input[type="number"]')[1].value,
-            mp: document.querySelectorAll('input[type="number"]')[2].value,
-            peso: document.querySelectorAll('input[type="number"]')[3].value,
-            itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
-            historia: document.querySelector('textarea').value,
-            inventario: Array.from(document.querySelectorAll('.inventory-item')).map(item => item.textContent),
-            encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item')).map(item => item.textContent)
-        };
-        localStorage.setItem('characterData', JSON.stringify(characterData));
-        alert('Personagem salvo!');
-    }
+        async function saveCharacter() {
+    const characterData = { /* (mesmo objeto do LocalStorage) */ };
+    await db.collection("personagens").doc("personagem1").set(characterData);
+    alert("Salvo no Firebase!");
+}
 
-    // Carregar dados do LocalStorage
-    function loadCharacter() {
-        const savedData = localStorage.getItem('characterData');
-        if (savedData) {
-            const characterData = JSON.parse(savedData);
-            document.querySelector('.stat-value').textContent = characterData.nome;
-            document.querySelectorAll('.stat-value')[1].textContent = characterData.classe;
-            document.querySelector('input[type="number"]').value = characterData.hp;
-            document.querySelector('input[type="number"]').value = characterData.sp;
-            document.querySelector('input[type="number"]').value = characterData.mp;
-            document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido;
-            // ... (preencher os outros campos)
-        }
+async function loadCharacter() {
+    const doc = await db.collection("personagens").doc("personagem1").get();
+    if (doc.exists) {
+        const data = doc.data();
+        // Preenche os campos...
     }
-
+}
     // Botão para salvar
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Salvar Personagem';
