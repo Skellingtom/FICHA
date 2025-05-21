@@ -108,34 +108,31 @@
         </div>
 
 <script>
-   // ====== FUNÇÃO PARA SALVAR FICHA ======
-        document.getElementById('saveBtn').addEventListener('click', function() {
-            const characterData = {
-                // Atributos básicos
-                nome: document.querySelector('.stat-value').textContent,
-                classe: document.querySelectorAll('.stat-value')[1].textContent,
-                hp: document.querySelectorAll('input[type="number"]')[0].value,
-                sp: document.querySelectorAll('input[type="number"]')[1].value,
-                mp: document.querySelectorAll('input[type="number"]')[2].value,
-                peso: document.querySelectorAll('input[type="number"]')[3].value,
-                itemQuerido: document.querySelectorAll('.stat-value')[2].textContent,
-                historia: document.querySelector('textarea').value,
+    // ====== FUNÇÃO PARA SALVAR FICHA ======
+document.getElementById('saveBtn').addEventListener('click', function() {
+    // Coleta todos os elementos editáveis
+    const characterData = {
+        // Atributos básicos
+        nome: document.querySelector('.stat-value').innerHTML,
+        classe: document.querySelectorAll('.stat-value')[1].innerHTML,
+        hp: document.querySelectorAll('input[type="number"]')[0].value,
+        sp: document.querySelectorAll('input[type="number"]')[1].value,
+        mp: document.querySelectorAll('input[type="number"]')[2].value,
+        peso: document.querySelectorAll('input[type="number"]')[3].value,
+        itemQuerido: document.querySelectorAll('.stat-value')[2].innerHTML,
+        historia: document.querySelector('textarea').value,
 
-                // Inventário (pega TODOS os itens)
-                inventario: Array.from(document.querySelectorAll('.section:nth-last-child(2) .inventory-item'))
-                    .map(item => item.textContent),
-                
-                // Encantamentos (pega TODOS os encantamentos)
-                encantamentos: Array.from(document.querySelectorAll('.section:last-child .inventory-item'))
-                    .map(item => item.textContent)
-            };
+        // Seções dinâmicas
+        inventario: Array.from(document.querySelectorAll('.section:nth-of-type(5) .inventory-item')).map(item => item.innerHTML),
+        encantamentos: Array.from(document.querySelectorAll('.section:nth-of-type(6) .inventory-item')).map(item => item.innerHTML),
+        equipamentos: Array.from(document.querySelectorAll('.section:nth-of-type(7) .inventory-item')).map(item => item.innerHTML)
+    };
 
-            // Salva no LocalStorage
-            localStorage.setItem('fichaSanguinolencia', JSON.stringify(characterData));
-            alert('Ficha salva com sucesso!');
-        });
+    localStorage.setItem('fichaSanguinolencia', JSON.stringify(characterData));
+    alert('Ficha salva com sucesso!');
+});
 
-       // ====== FUNÇÃO PARA CARREGAR FICHA ======
+// ====== FUNÇÃO PARA CARREGAR FICHA ======
 document.getElementById('loadBtn').addEventListener('click', function() {
     const savedData = localStorage.getItem('fichaSanguinolencia');
     if (!savedData) {
@@ -145,96 +142,81 @@ document.getElementById('loadBtn').addEventListener('click', function() {
 
     const characterData = JSON.parse(savedData);
 
-    // Preenche os campos básicos (nome, classe, HP, etc.)
-    document.querySelector('.stat-value').textContent = characterData.nome || '';
-    document.querySelectorAll('.stat-value')[1].textContent = characterData.classe || '';
+    // Preenche campos básicos
+    document.querySelector('.stat-value').innerHTML = characterData.nome || '';
+    document.querySelectorAll('.stat-value')[1].innerHTML = characterData.classe || '';
     document.querySelectorAll('input[type="number"]')[0].value = characterData.hp || '';
     document.querySelectorAll('input[type="number"]')[1].value = characterData.sp || '';
     document.querySelectorAll('input[type="number"]')[2].value = characterData.mp || '';
     document.querySelectorAll('input[type="number"]')[3].value = characterData.peso || '';
-    document.querySelectorAll('.stat-value')[2].textContent = characterData.itemQuerido || '';
+    document.querySelectorAll('.stat-value')[2].innerHTML = characterData.itemQuerido || '';
     document.querySelector('textarea').value = characterData.historia || '';
 
-    // ====== CORREÇÃO: CARREGAR INVENTÁRIO ======
-    const inventarioSection = document.querySelector('.section:nth-last-child(2)'); // Seleciona a seção de Inventário
-    const addItemBtnInventario = inventarioSection.querySelector('.add-btn'); // Botão "Adicionar Item"
-
-    // Remove todos os itens atuais do inventário
-    const itensInventarioAtuais = inventarioSection.querySelectorAll('.inventory-item');
-    itensInventarioAtuais.forEach(item => item.remove());
-
-    // Adiciona os itens salvos de volta
-    if (characterData.inventario && characterData.inventario.length > 0) {
-        characterData.inventario.forEach(itemText => {
-            const newItem = document.createElement('div');
-            newItem.className = 'inventory-item';
-            newItem.contentEditable = true;
-            newItem.textContent = itemText;
-            inventarioSection.insertBefore(newItem, addItemBtnInventario.parentNode);
-        });
+    // Função auxiliar para carregar seções
+    function loadSection(sectionSelector, items) {
+        const section = document.querySelector(sectionSelector);
+        // Remove todos os itens existentes
+        section.querySelectorAll('.inventory-item').forEach(item => item.remove());
+        
+        // Adiciona os itens salvos
+        if (items && items.length > 0) {
+            const buttonContainer = section.querySelector('.add-btn').parentNode;
+            items.forEach(itemHTML => {
+                const newItem = document.createElement('div');
+                newItem.className = 'inventory-item';
+                newItem.contentEditable = true;
+                newItem.innerHTML = itemHTML;
+                section.insertBefore(newItem, buttonContainer);
+            });
+        }
     }
 
-    // ====== CORREÇÃO: CARREGAR ENCANTAMENTOS ======
-    const encantamentosSection = document.querySelector('.section:last-child'); // Seleciona a seção de Encantamentos
-    const addEncantamentoBtn = encantamentosSection.querySelector('.add-btn'); // Botão "Adicionar Encantamento"
-
-    // Remove todos os encantamentos atuais
-    const encantamentosAtuais = encantamentosSection.querySelectorAll('.inventory-item');
-    encantamentosAtuais.forEach(item => item.remove());
-
-    // Adiciona os encantamentos salvos de volta
-    if (characterData.encantamentos && characterData.encantamentos.length > 0) {
-        characterData.encantamentos.forEach(encantamentoText => {
-            const newItem = document.createElement('div');
-            newItem.className = 'inventory-item';
-            newItem.contentEditable = true;
-            newItem.textContent = encantamentoText;
-            encantamentosSection.insertBefore(newItem, addEncantamentoBtn.parentNode);
-        });
-    }
+    // Carrega todas as seções
+    loadSection('.section:nth-of-type(5)', characterData.inventario);    // Inventário
+    loadSection('.section:nth-of-type(6)', characterData.encantamentos); // Encantamentos
+    loadSection('.section:nth-of-type(7)', characterData.equipamentos);  // Equipamentos
 
     alert('Ficha carregada com sucesso!');
 });
 
-        // ====== FUNÇÃO PARA LIMPAR FICHA ======
-        document.getElementById('clearBtn').addEventListener('click', function() {
-            if (confirm('Tem certeza que deseja limpar toda a ficha?')) {
-                // Limpa inputs editáveis
-                document.querySelectorAll('[contenteditable="true"]').forEach(el => el.textContent = '');
-                document.querySelector('textarea').value = '';
-                document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+// ====== FUNÇÃO PARA LIMPAR FICHA ======
+document.getElementById('clearBtn').addEventListener('click', function() {
+    if (confirm('Tem certeza que deseja limpar toda a ficha?')) {
+        // Limpa inputs editáveis
+        document.querySelectorAll('[contenteditable="true"]').forEach(el => el.innerHTML = '');
+        document.querySelector('textarea').value = '';
+        document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
 
-                // Limpa inventário e encantamentos
-                document.querySelectorAll('.inventory-item').forEach(item => item.remove());
-                localStorage.removeItem('fichaSanguinolencia');
-                alert('Ficha resetada!');
-            }
-        });
+        // Limpa todas as seções dinâmicas
+        document.querySelectorAll('.inventory-item').forEach(item => item.remove());
+        localStorage.removeItem('fichaSanguinolencia');
+        alert('Ficha resetada!');
+    }
+});
 
-        // Seleciona TODOS os botões e adiciona o evento de clique
-      document.querySelectorAll('.add-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const section = this.closest('.section');
-            const newItem = document.createElement('div');
-            newItem.className = 'inventory-item';
-            newItem.contentEditable = 'true';
-            section.insertBefore(newItem, this.parentNode);
-        });
+// ====== FUNÇÕES PARA ADICIONAR/REMOVER ITENS ======
+document.querySelectorAll('.add-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const section = this.closest('.section');
+        const newItem = document.createElement('div');
+        newItem.className = 'inventory-item';
+        newItem.contentEditable = 'true';
+        section.insertBefore(newItem, this.parentNode);
     });
+});
 
-    // Remover último item/encantamento
-    document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const section = this.closest('.section');
-            const items = section.querySelectorAll('.inventory-item');
-            
-            if (items.length > 0) {
-                items[items.length - 1].remove();
-            } else {
-                alert("Não há itens para remover!");
-            }
-        });
+document.querySelectorAll('.remove-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const section = this.closest('.section');
+        const items = section.querySelectorAll('.inventory-item');
+        
+        if (items.length > 0) {
+            items[items.length - 1].remove();
+        } else {
+            alert("Não há itens para remover!");
+        }
     });
+});
     </script>
 
 </body>
